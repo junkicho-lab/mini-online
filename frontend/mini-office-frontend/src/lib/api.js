@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API 기본 URL 설정
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://3001-i3e3xnwjbdgrlez3r9nlk-bc714048.manusvm.computer/api';
 
 // Axios 인스턴스 생성
 const api = axios.create({

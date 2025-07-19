@@ -5,43 +5,58 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import './App.css';
+import AnnouncementsPage from './pages/AnnouncementsPage';
+import SchedulesPage from './pages/SchedulesPage';
+import DocumentsPage from './pages/DocumentsPage';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* 로그인 페이지 */}
           <Route path="/login" element={<LoginPage />} />
-          
-          {/* 보호된 라우트들 */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Layout>
-                <DashboardPage />
-              </Layout>
-            </ProtectedRoute>
-          } />
-          
-          {/* 루트 경로는 대시보드로 리다이렉트 */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <DashboardPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/announcements"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AnnouncementsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/schedules"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SchedulesPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/documents"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <DocumentsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
-          {/* 404 페이지 */}
-          <Route path="*" element={
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="text-center">
-                <h1 className="text-4xl font-bold text-muted-foreground mb-4">404</h1>
-                <p className="text-lg text-muted-foreground mb-6">페이지를 찾을 수 없습니다.</p>
-                <button
-                  onClick={() => window.history.back()}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-                >
-                  이전 페이지로 돌아가기
-                </button>
-              </div>
-            </div>
-          } />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
