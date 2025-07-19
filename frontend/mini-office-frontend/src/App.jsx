@@ -8,6 +8,8 @@ import DashboardPage from './pages/DashboardPage';
 import AnnouncementsPage from './pages/AnnouncementsPage';
 import SchedulesPage from './pages/SchedulesPage';
 import DocumentsPage from './pages/DocumentsPage';
+import NotificationsPage from './pages/NotificationsPage';
+import UsersPage from './pages/UsersPage';
 
 function App() {
   return (
@@ -51,6 +53,26 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <DocumentsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <NotificationsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <UsersPage />
                 </Layout>
               </ProtectedRoute>
             }
