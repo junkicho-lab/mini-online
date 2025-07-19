@@ -1,144 +1,142 @@
 import React, { useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Eye, EyeOff, School } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, School, Lock, Mail, ArrowRight } from 'lucide-react';
 
 const LoginPage = () => {
-  const { login, isAuthenticated } = useAuth();
-  const location = useLocation();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // 이미 로그인된 경우 대시보드로 리다이렉트
-  if (isAuthenticated) {
-    const from = location.state?.from?.pathname || '/dashboard';
-    return <Navigate to={from} replace />;
-  }
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // 입력 시 에러 메시지 제거
-    if (error) setError('');
-  };
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
     setError('');
 
     try {
-      const result = await login(formData);
-      
-      if (!result.success) {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError('로그인 중 오류가 발생했습니다.');
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (error) {
+      setError('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary rounded-full">
-              <School className="h-8 w-8 text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-indigo-200/30 to-pink-200/30 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative w-full max-w-md">
+        {/* Main Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
+              <School className="w-8 h-8 text-white" />
             </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">미니 온라인 교무실</h1>
+            <p className="text-gray-600">계정에 로그인하여 교무실 시스템을 이용하세요</p>
           </div>
-          <CardTitle className="text-2xl font-bold">미니 온라인 교무실</CardTitle>
-          <CardDescription>
-            계정에 로그인하여 교무실 시스템을 이용하세요
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">이메일</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="이메일을 입력하세요"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                disabled={loading}
-              />
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+              <p className="text-red-600 text-sm text-center">{error}</p>
             </div>
-            
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
+              <label className="text-sm font-medium text-gray-700 block">이메일</label>
               <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="비밀번호를 입력하세요"
-                  value={formData.password}
-                  onChange={handleInputChange}
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                  placeholder="이메일을 입력하세요"
                   required
-                  disabled={loading}
-                  className="pr-10"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 block">비밀번호</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-12 pr-12 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                  placeholder="비밀번호를 입력하세요"
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  disabled={loading}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
+                  )}
                 </button>
               </div>
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={loading}
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  로그인 중...
-                </>
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
-                '로그인'
+                <>
+                  <span>로그인</span>
+                  <ArrowRight className="w-5 h-5" />
+                </>
               )}
-            </Button>
+            </button>
           </form>
-          
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <h4 className="font-semibold mb-2">테스트 계정</h4>
-            <p className="text-sm text-muted-foreground">
-              이메일: admin@school.edu<br />
-              비밀번호: admin123!
-            </p>
+
+          {/* Demo Credentials */}
+          <div className="mt-8 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">테스트 계정</h3>
+            <div className="space-y-1 text-sm text-blue-700">
+              <p><span className="font-medium">이메일:</span> admin@school.edu</p>
+              <p><span className="font-medium">비밀번호:</span> admin123!</p>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-500">
+            © 2025 미니 온라인 교무실. All rights reserved.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
